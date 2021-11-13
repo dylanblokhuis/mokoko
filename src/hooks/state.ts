@@ -1,4 +1,4 @@
-import { produce } from 'immer'
+import { produce, enableMapSet } from 'immer'
 import type { Draft } from 'immer'
 import createReact from 'zustand'
 import create, {
@@ -10,7 +10,8 @@ import create, {
 } from 'zustand/vanilla'
 import { devtools } from 'zustand/middleware'
 import { v4 } from 'uuid'
-import type { BlockProps } from './blocks'
+
+enableMapSet();
 
 const immer =
   <
@@ -40,43 +41,47 @@ const immer =
     )
 
 interface EditorStore {
-  blockTypes: BlockType<any>[]
+  blockTypes: Map<string, BlockType<any>>
+  registerBlockType: (key: string, object: BlockType<any>) => void
   blocks: Block<any>[]
-  addBlock: (blockType: BlockType<any>) => void
+  addBlock: (blockTypeKey: string, insertAfter?: string) => void
+  focusedBlockKey: string | undefined
+  setFocusedBlock: (key: string) => void
 }
 
 interface BlockType<T> {
-  // id: string
   name: string
   attributes: T
-  edit: React.FC<BlockProps<T>>
-  // setAttributes: (attributes: Record<string, T>) => void
+  edit: React.FC<Block<T>>
 }
 
 export interface Block<T> {
   id: string
   blockType: BlockType<T>
-  // element: React.FC<BlockProps<T>>
   attributes: T
   setAttributes: (attributes: T) => void
 }
 
 const editorStore = create<EditorStore>(devtools(immer((set, get) => ({
-  blockTypes: [],
-  registerBlockType: function <T>(object: BlockType<T>) {
+  blockTypes: new Map<string, BlockType<any>>(),
+  registerBlockType: function <T>(key: string, object: BlockType<T>) {
     set(state => {
-      state.blockTypes.push(object)
+      state.blockTypes.set(key, object)
     })
   },
   blocks: [],
-  addBlock: (blockType) => set(state => {
+  addBlock: (blockTypeKey, insertAfter) => set(state => {
     const id = v4();
-    state.blocks.push({
+    const blockType = state.blockTypes.get(blockTypeKey);
+    if (!blockType) {
+      throw new Error("Block type does not exist inside the blockTypes store.")
+    }
+
+    const block = {
       id: id,
       blockType: blockType,
-      // set defaults if given
       attributes: blockType.attributes,
-      setAttributes: function (attributes) {
+      setAttributes: function (attributes: any) {
         console.log(attributes);        
         set(state => {
           const it = state.blocks.find(it => it.id === id)
@@ -85,15 +90,28 @@ const editorStore = create<EditorStore>(devtools(immer((set, get) => ({
           }
         })
       },
-    })
+    }
+
+    if (insertAfter) {
+      const index = state.blocks.findIndex(it => it.id === insertAfter)
+      state.blocks.splice(index + 1, 0, block)
+    } else {
+      state.blocks.push(block)
+    }
+
+    state.focusedBlockKey = id;
+  }),
+  focusedBlockKey: undefined,
+  setFocusedBlock: (key: string) => set(state => {
+    state.focusedBlockKey = key;
   })
 }))))
 
-export function registerBlockType<T>(object: BlockType<T>) {
+export function registerBlockType<T>(key: string, object: BlockType<T>) {
   const { setState } = editorStore;
 
   setState(state => {
-    state.blockTypes.push(object)
+    state.blockTypes.set(key, object)
   })
 }
 

@@ -6,11 +6,11 @@ export interface ParagraphAttributes {
   marginBottom: string
 }
 
-registerBlockType<ParagraphAttributes>({
+registerBlockType<ParagraphAttributes>("core/paragraph", {
   name: "Paragraph",
   edit: Paragraph,
   attributes: {
-    content: "hello",
+    content: "",
     marginBottom: "15px"
   }
 })

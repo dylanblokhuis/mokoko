@@ -1,15 +1,26 @@
+import { useEffect } from "react";
 import { Block } from "./state";
 
-export interface BlockProps<T> {
-  setAttributes: (attributes:T) => void
-  attributes: T
+// export interface InitialBlockProps<T> {
+//   setAttributes: (attributes:T) => void
+//   attributes: T,
+// }
+
+interface BlockProps {
+  className?: string
 }
 
-export default function useBlockProps(block: Block<any>) {
+interface BlockPropsOptions {
+  focusOnCreate?: boolean
+}
+
+export default function useBlockProps(props?: BlockPropsOptions): BlockProps {
+  // this should become the hook that manages all block stuff, like extending a class for example
+  // useEffect(() => {
+  //   console.log(this);
+  // }, [focusOnCreate]);
+
   return {
-    setAttributes: (attributes: Record<string, unknown>) => {
-      block.setAttributes(attributes)
-    },
-    attributes: block.attributes
+    className: "block"
   }
 }
