@@ -23,7 +23,12 @@ function Block({ id, children, isFocused }: BlockProps) {
   }
 
   return (
-    <div onClick={handleClick} className={className}>
+    <div
+      onBlur={() => setFocusedBlock(undefined)}
+      onFocus={() => setFocusedBlock(id)}
+      onClick={handleClick}
+      className={className}
+    >
       {children}
     </div>
   )

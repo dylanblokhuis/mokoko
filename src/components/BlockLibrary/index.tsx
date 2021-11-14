@@ -53,7 +53,8 @@ function BlockLibrary() {
             {...positionProps}
             ref={overlayRef}
             isOpen={state.isOpen}
-            onClose={state.close} />
+            onClose={state.close}
+          />
 
         </OverlayContainer>
       )}

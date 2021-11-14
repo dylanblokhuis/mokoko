@@ -20,7 +20,6 @@ export default function RichText({
 }: RichTextProps) {
   const ref = useRef<HTMLParagraphElement>(null);
   const addBlock = useEditorStore(state => state.addBlock)
-  const setFocusedBlock = useEditorStore(state => state.setFocusedBlock)
   const isFocused = useEditorStore(state => state.focusedBlockKey) === blockId
   const isPlaceholder = html === "" && !isFocused
 
@@ -65,7 +64,6 @@ export default function RichText({
       className={className}
       onKeyDown={onKeyDownHandler}
       onChange={onChange}
-      onFocus={() => setFocusedBlock(blockId)}
     />
   )
 }

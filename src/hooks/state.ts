@@ -46,7 +46,7 @@ interface EditorStore {
   blocks: Block<any>[]
   addBlock: (blockTypeKey: string, insertAfter?: string) => void
   focusedBlockKey: string | undefined
-  setFocusedBlock: (key: string) => void
+  setFocusedBlock: (key: string | undefined) => void
 }
 
 interface BlockType<T> {
@@ -102,7 +102,7 @@ const editorStore = create<EditorStore>(devtools(immer((set, get) => ({
     state.focusedBlockKey = id;
   }),
   focusedBlockKey: undefined,
-  setFocusedBlock: (key: string) => set(state => {
+  setFocusedBlock: (key: string | undefined) => set(state => {
     state.focusedBlockKey = key;
   })
 }))))
