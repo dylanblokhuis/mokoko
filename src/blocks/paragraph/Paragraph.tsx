@@ -1,15 +1,15 @@
 import React from 'react'
-import { HeadingAttributes } from '.'
+import { ParagraphAttributes } from '.'
 import { Block } from '../../hooks/state';
-import RichText from '../internals/RichText';
+import RichText from '../../components/RichText';
 
-export default function Heading({ attributes, setAttributes, id }: Block<HeadingAttributes>) {
+export default function Paragraph({ attributes, setAttributes, id }: Block<ParagraphAttributes>) {
   return (
     <RichText
-      as="h1"
+      as="p"
       html={attributes.content}
       blockId={id}
-      onChange={(event: React.FormEvent<HTMLHeadingElement>) => {
+      onChange={(event: React.FormEvent<HTMLParagraphElement>) => {
         setAttributes({
           ...attributes,
           content: event.currentTarget.innerHTML

@@ -1,6 +1,6 @@
 import { ReactNode, memo } from "react";
 import classNames from "classnames/bind"
-import styles from "./block.module.css";
+import styles from "./Block.module.css";
 import useEditorStore from "../../hooks/state";
 
 interface BlockProps {

@@ -1,7 +1,0 @@
-.mk-block {
-  @apply w-full;
-}
-
-.is-focused > * {
-  @apply border-2 border-blue-500;
-}

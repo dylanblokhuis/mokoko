@@ -1,0 +1,8 @@
+.mk-block {
+  @apply w-full;
+}
+
+.is-focused > * {
+  box-shadow: 0 0 0 2px rgb(163, 199, 223);
+  @apply rounded;
+}

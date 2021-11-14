@@ -1,0 +1,9 @@
+.BlockLibrary {
+  @apply grid grid-cols-3 max-w-[350px] shadow rounded ml-5 mt-5;
+}
+
+.BlockLibrary_button {
+  @apply bg-white w-full py-8 mx-auto;
+  @apply hover:bg-gray-50;
+  @apply focus:bg-gray-100;
+}
