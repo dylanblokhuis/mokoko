@@ -45,7 +45,7 @@ const BlockLibraryPopover = forwardRef<HTMLDivElement, BlockLibraryPopoverProps>
       <FocusScope restoreFocus>
         <div
           style={style}
-          className="bg-gray-fff flex flex-col px-5 py-3 shadow-md rounded"
+          className="bg-white flex flex-col px-5 py-3 shadow border border-gray-300 rounded"
           ref={ref}
           {...mergeProps(overlayProps, dialogProps, otherProps, modalProps)}
         >
@@ -53,10 +53,12 @@ const BlockLibraryPopover = forwardRef<HTMLDivElement, BlockLibraryPopoverProps>
             Click on a block
           </h2>
 
-          <div className="grid grid-cols-3">
+          <hr className="mt-3 mb-4" />
+
+          <div className="grid grid-cols-3 min-w-[350px] gap-5">
             {blockTypes.map(([key, blockType]) => (
               <button
-                className=""
+                className="py-5 bg-gray-100 hover:bg-gray-200 rounded"
                 key={blockType.name}
                 onClick={() => handleClick(key)}
               >

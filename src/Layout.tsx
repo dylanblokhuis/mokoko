@@ -9,12 +9,16 @@ import Editor from "./components/Editor";
  */
 import "./blocks/paragraph";
 import "./blocks/heading";
+import "./blocks/button";
 
 function Layout() {
   return (
     <OverlayProvider>
       <div className="Layout">
-        <BlockLibrary />
+        <div className="Toolbar bg-gray-100 py-2 min-h-[50px] flex items-center justify-start px-6">
+          <BlockLibrary />
+        </div>
+
         <Editor />
       </div>
     </OverlayProvider>

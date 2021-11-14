@@ -26,7 +26,7 @@ function BlockLibrary() {
     targetRef: triggerRef,
     overlayRef,
     placement: 'top',
-    offset: 5,
+    offset: 25,
     isOpen: state.isOpen
   });
 
@@ -42,7 +42,7 @@ function BlockLibrary() {
 
   return (
     <div className={styles.BlockLibrary}>
-      <button {...buttonProps} {...triggerProps} ref={triggerRef}>
+      <button className="bg-blue-500 text-white px-3 py-1 rounded shadow" {...buttonProps} {...triggerProps} ref={triggerRef}>
         Add block
       </button>
 
@@ -55,7 +55,6 @@ function BlockLibrary() {
             isOpen={state.isOpen}
             onClose={state.close}
           />
-
         </OverlayContainer>
       )}
     </div>
