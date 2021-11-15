@@ -1,7 +1,7 @@
 import React from 'react'
 import { ParagraphAttributes } from '.'
-import { Block } from '../../hooks/state';
-import RichText from '../../components/RichText';
+import { Block } from '../../hooks/state'
+import RichText from '../../components/RichText'
 
 export default function Edit({ attributes, setAttributes, id }: Block<ParagraphAttributes>) {
   return (

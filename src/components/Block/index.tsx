@@ -1,21 +1,23 @@
-import { ReactNode, memo } from "react";
-import classNames from "classnames/bind"
-import styles from "./Block.module.css";
-import useEditorStore from "../../hooks/state";
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+import { ReactNode, memo, useRef } from 'react'
+import classNames from 'classnames/bind'
+import styles from './Block.module.css'
+import useEditorStore from '../../hooks/state'
 
 interface BlockProps {
   id: string
-  children: ReactNode,
+  children: ReactNode
   isFocused: boolean
 }
 
-const cx = classNames.bind(styles);
+const cx = classNames.bind(styles)
 
 function Block({ id, children, isFocused }: BlockProps) {
-  const setFocusedBlock = useEditorStore(state => state.setFocusedBlock)
+  const ref = useRef(null)
+  const setFocusedBlock = useEditorStore((state) => state.setFocusedBlock)
   const className = cx({
-    "mk-block": true,
-    "is-focused": isFocused
+    'mk-block': true,
+    'is-focused': isFocused
   })
 
   function handleClick() {
@@ -24,6 +26,9 @@ function Block({ id, children, isFocused }: BlockProps) {
 
   return (
     <div
+      role="button"
+      ref={ref}
+      tabIndex={0}
       onBlur={() => setFocusedBlock(undefined)}
       onFocus={() => setFocusedBlock(id)}
       onClick={handleClick}

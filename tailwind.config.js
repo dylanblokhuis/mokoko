@@ -1,16 +1,13 @@
 module.exports = {
-  mode: "jit",
-  purge: [
-    "src/**/*.tsx"
-  ],
+  mode: 'jit',
+  purge: ['src/**/*.tsx'],
   darkMode: false, // or 'media' or 'class'
   theme: {
-    extend: {},
+    extend: {}
   },
   variants: {
-    extend: {},
+    extend: {}
   },
-  plugins: [
-    require('@tailwindcss/typography'),
-  ],
+  // eslint-disable-next-line global-require
+  plugins: [require('@tailwindcss/typography')]
 }
