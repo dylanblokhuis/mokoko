@@ -10,6 +10,7 @@ import create, {
 } from 'zustand/vanilla'
 import { devtools } from 'zustand/middleware'
 import { v4 } from 'uuid'
+import { createElement } from 'react';
 
 enableMapSet();
 
@@ -47,12 +48,14 @@ interface EditorStore {
   addBlock: (blockTypeKey: string, insertAfter?: string) => void
   focusedBlockKey: string | undefined
   setFocusedBlock: (key: string | undefined) => void
+  save: () => void
 }
 
 interface BlockType<T> {
   name: string
   attributes: T
   edit: React.FC<Block<T>>
+  save: React.FC<Block<T>>
 }
 
 export interface Block<T> {
@@ -82,7 +85,6 @@ const editorStore = create<EditorStore>(devtools(immer((set, get) => ({
       blockType: blockType,
       attributes: blockType.attributes,
       setAttributes: function (attributes: any) {
-        console.log(attributes);        
         set(state => {
           const it = state.blocks.find(it => it.id === id)
           if (it) {
@@ -104,7 +106,17 @@ const editorStore = create<EditorStore>(devtools(immer((set, get) => ({
   focusedBlockKey: undefined,
   setFocusedBlock: (key: string | undefined) => set(state => {
     state.focusedBlockKey = key;
-  })
+  }),
+  save: async () => {
+    const ReactDOMServer = await import('react-dom/server');
+    const blocks = get().blocks;
+
+    const rendered = blocks.map(block => {
+      return ReactDOMServer.renderToStaticMarkup(createElement(block.blockType.save, block))
+    })
+
+    alert(JSON.stringify(rendered))
+  }
 }))))
 
 export function registerBlockType<T>(key: string, object: BlockType<T>) {

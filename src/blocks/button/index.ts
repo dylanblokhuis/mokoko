@@ -1,5 +1,6 @@
 import { registerBlockType } from "../../hooks/state";
-import Button from "./Button";
+import Edit from "./Edit";
+import Save from "./Save";
 
 export interface ButtonAttributes {
   url: string
@@ -8,7 +9,8 @@ export interface ButtonAttributes {
 
 registerBlockType<ButtonAttributes>("core/button", {
   name: "Button",
-  edit: Button,
+  edit: Edit,
+  save: Save,
   attributes: {
     url: "",
     text: "I'm a button!"

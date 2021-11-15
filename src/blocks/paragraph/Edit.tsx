@@ -3,7 +3,7 @@ import { ParagraphAttributes } from '.'
 import { Block } from '../../hooks/state';
 import RichText from '../../components/RichText';
 
-export default function Paragraph({ attributes, setAttributes, id }: Block<ParagraphAttributes>) {
+export default function Edit({ attributes, setAttributes, id }: Block<ParagraphAttributes>) {
   return (
     <RichText
       as="p"

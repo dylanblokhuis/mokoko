@@ -3,7 +3,7 @@ import { HeadingAttributes } from '.'
 import { Block } from '../../hooks/state';
 import RichText from '../../components/RichText';
 
-export default function Heading({ attributes, setAttributes, id }: Block<HeadingAttributes>) {
+export default function Edit({ attributes, setAttributes, id }: Block<HeadingAttributes>) {
   return (
     <RichText
       as="h1"
