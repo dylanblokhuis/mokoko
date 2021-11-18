@@ -3,7 +3,7 @@ import { ParagraphAttributes } from '.'
 import { Block } from '../../hooks/state'
 import RichText from '../../components/RichText'
 
-export default function Edit({ attributes, setAttributes, id }: Block<ParagraphAttributes>) {
+const Edit = function ({ attributes, setAttributes, id }: Block<ParagraphAttributes>) {
   return (
     <RichText
       as="p"
@@ -18,3 +18,5 @@ export default function Edit({ attributes, setAttributes, id }: Block<ParagraphA
     />
   )
 }
+
+export default Edit

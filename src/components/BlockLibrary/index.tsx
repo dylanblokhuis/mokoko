@@ -2,11 +2,11 @@ import { useRef } from 'react'
 import { useOverlayTriggerState } from '@react-stately/overlays'
 import { OverlayContainer, useOverlayPosition, useOverlayTrigger } from '@react-aria/overlays'
 
-import { useButton } from '@react-aria/button'
 import styles from './index.module.css'
 import BlockLibraryPopover from './Popover'
+import Button from '../Button'
 
-function BlockLibrary() {
+const BlockLibrary = function () {
   const state = useOverlayTriggerState({})
   const triggerRef = useRef(null)
   const overlayRef = useRef(null)
@@ -20,7 +20,7 @@ function BlockLibrary() {
   const { overlayProps: positionProps } = useOverlayPosition({
     targetRef: triggerRef,
     overlayRef,
-    placement: 'top',
+    placement: 'bottom',
     offset: 25,
     isOpen: state.isOpen
   })
@@ -28,18 +28,12 @@ function BlockLibrary() {
   // useButton ensures that focus management is handled correctly,
   // across all browsers. Focus is restored to the button once the
   // popover closes.
-  const { buttonProps } = useButton(
-    {
-      onPress: () => state.open()
-    },
-    triggerRef
-  )
 
   return (
     <div className={styles.BlockLibrary}>
-      <button type="button" className="bg-blue-500 text-white px-3 py-1 rounded shadow" {...buttonProps} {...triggerProps} ref={triggerRef}>
+      <Button onPress={() => state.open()} className="bg-blue-500 text-white px-3 py-1 rounded shadow" ref={triggerRef} {...triggerProps}>
         Add block
-      </button>
+      </Button>
 
       {state.isOpen && (
         <OverlayContainer>

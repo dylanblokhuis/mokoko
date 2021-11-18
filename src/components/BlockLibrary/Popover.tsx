@@ -4,6 +4,7 @@ import { useDialog } from '@react-aria/dialog'
 import { FocusScope } from '@react-aria/focus'
 import { mergeProps } from '@react-aria/utils'
 import useEditorStore from '../../hooks/state'
+import Button from '../Button'
 
 interface BlockLibraryPopoverProps extends React.HTMLAttributes<HTMLDivElement> {
   isOpen: boolean
@@ -51,14 +52,9 @@ const BlockLibraryPopover = forwardRef<HTMLDivElement, BlockLibraryPopoverProps>
 
         <div className="grid grid-cols-3 min-w-[350px] gap-5">
           {blockTypes.map(([key, blockType]) => (
-            <button
-              type="button"
-              className="py-5 bg-gray-100 hover:bg-gray-200 rounded"
-              key={blockType.name}
-              onClick={() => handleClick(key)}
-            >
+            <Button className="py-5 bg-gray-100 hover:bg-gray-200 rounded" key={blockType.name} onPress={() => handleClick(key)}>
               {blockType.name}
-            </button>
+            </Button>
           ))}
         </div>
 

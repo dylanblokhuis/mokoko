@@ -17,7 +17,8 @@
     "import/no-unresolved": "off",
     "no-use-before-define": "off",
     "no-param-reassign": "off",
-    "react/jsx-props-no-spreading": "off"
+    "react/jsx-props-no-spreading": "off",
+    "func-names": "off"
   },
   "env": {
     "browser": true

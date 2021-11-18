@@ -11,7 +11,7 @@ export interface RichTextProps {
   placeholder?: string
 }
 
-export default function RichText({ placeholder = 'Type here...', as, html, onChange, blockId }: RichTextProps) {
+const RichText = function ({ placeholder = 'Type here...', as, html, onChange, blockId }: RichTextProps) {
   const ref = useRef<HTMLParagraphElement>(null)
   const addBlock = useEditorStore((state) => state.addBlock)
   const isFocused = useEditorStore((state) => state.focusedBlockKey) === blockId
@@ -61,3 +61,5 @@ export default function RichText({ placeholder = 'Type here...', as, html, onCha
     />
   )
 }
+
+export default RichText

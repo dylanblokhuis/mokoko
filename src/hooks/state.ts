@@ -37,6 +37,10 @@ interface EditorStore {
   focusedBlockKey: string | undefined
   setFocusedBlock: (key: string | undefined) => void
   save: () => void
+  blockActions: {
+    moveUp: (key: string) => void
+    moveDown: (key: string) => void
+  }
 }
 
 export interface Block<T> {
@@ -101,6 +105,28 @@ const editorStore = create<EditorStore>(
         })
 
         alert(JSON.stringify(rendered))
+      },
+      blockActions: {
+        moveUp: (key: string) =>
+          set((state) => {
+            const index = state.blocks.findIndex((it) => it.id === key)
+            if (index - 1 === -1) {
+              return
+            }
+
+            const from = state.blocks.splice(index, 1)[0]
+            state.blocks.splice(index - 1, 0, from)
+          }),
+        moveDown: (key: string) =>
+          set((state) => {
+            const index = state.blocks.findIndex((it) => it.id === key)
+            if (index === state.blocks.length - 1) {
+              return
+            }
+
+            const from = state.blocks.splice(index, 1)[0]
+            state.blocks.splice(index + 1, 0, from)
+          })
       }
     }))
   )
@@ -110,6 +136,9 @@ export function registerBlockType<T>(key: string, object: BlockType<T>) {
   const { setState } = editorStore
 
   setState((state) => {
+    if (state.blockTypes.has(key)) {
+      throw new Error(`Block type: ${key} is already registered.`)
+    }
     state.blockTypes.set(key, object)
   })
 }
