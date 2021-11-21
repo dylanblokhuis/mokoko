@@ -5,7 +5,6 @@ import create, { GetState, SetState, State, StateCreator, StoreApi } from 'zusta
 import { devtools } from 'zustand/middleware'
 import { v4 } from 'uuid'
 import { createElement } from 'react'
-import { WritableDraft } from 'immer/dist/internal'
 
 enableMapSet()
 
@@ -45,8 +44,8 @@ interface EditorStore {
 
   blocks: Block<any>[]
   addBlock: (blockTypeKey: string, options?: AddBlockOptions) => void
-  select: (immerState: WritableDraft<EditorStore>, block: string | Block<any>) => WritableDraft<Block<any>>
-  container: (immerState: WritableDraft<EditorStore>, blockId: string) => WritableDraft<Block<any>[]>
+  select: (immerState: Draft<EditorStore>, block: string | Block<any>) => Draft<Block<any>>
+  container: (immerState: Draft<EditorStore>, blockId: string) => Draft<Block<any>[]>
 }
 
 export interface Block<T> {
