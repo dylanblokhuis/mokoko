@@ -45,26 +45,26 @@ const Block = function ({ id, children, isFocused, index }: BlockProps) {
     }
   }, [triggerRef, overlayRef, index, isFocused])
 
-  function handleClick() {
+  function handleClick(event: React.MouseEvent<HTMLDivElement>) {
+    event.preventDefault()
+    event.stopPropagation()
+    setFocusedBlock(id)
+  }
+
+  function handleFocus(event: React.FocusEvent<HTMLDivElement>) {
+    event.preventDefault()
+    event.stopPropagation()
     setFocusedBlock(id)
   }
 
   return (
     <>
-      <div
-        role="button"
-        ref={triggerRef}
-        tabIndex={0}
-        onFocus={() => setFocusedBlock(id)}
-        onClick={handleClick}
-        className={className}
-        {...triggerProps}
-      >
+      <div role="button" ref={triggerRef} tabIndex={0} onFocus={handleFocus} onClick={handleClick} className={className} {...triggerProps}>
         {children}
       </div>
 
       {isFocused && (
-        <OverlayContainer>
+        <OverlayContainer onClick={(event) => event.stopPropagation()} onFocus={(event) => event.stopPropagation()}>
           <ToolbarPopover id={overlayProps.id} blockId={id} style={overlayStyle} ref={overlayRef} />
         </OverlayContainer>
       )}

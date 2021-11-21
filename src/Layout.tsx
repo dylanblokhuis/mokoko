@@ -12,6 +12,7 @@ import Button from './components/Button'
 import './blocks/paragraph'
 import './blocks/heading'
 import './blocks/button'
+import './blocks/column'
 
 const Layout = function () {
   const save = useEditorStore((state) => state.save)

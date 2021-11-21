@@ -5,6 +5,7 @@ import create, { GetState, SetState, State, StateCreator, StoreApi } from 'zusta
 import { devtools } from 'zustand/middleware'
 import { v4 } from 'uuid'
 import { createElement } from 'react'
+import { WritableDraft } from 'immer/dist/internal'
 
 enableMapSet()
 
@@ -29,18 +30,23 @@ interface BlockType<T> {
   save: React.FC<Block<T>>
 }
 
+interface AddBlockOptions {
+  insertAfterBlock?: string
+  blockId?: string
+  toChildren?: boolean
+}
+
 interface EditorStore {
   blockTypes: Map<string, BlockType<any>>
   registerBlockType: (key: string, object: BlockType<any>) => void
-  blocks: Block<any>[]
-  addBlock: (blockTypeKey: string, insertAfter?: string) => void
   focusedBlockKey: string | undefined
   setFocusedBlock: (key: string | undefined) => void
   save: () => void
-  blockActions: {
-    moveUp: (key: string) => void
-    moveDown: (key: string) => void
-  }
+
+  blocks: Block<any>[]
+  addBlock: (blockTypeKey: string, options?: AddBlockOptions) => void
+  select: (immerState: WritableDraft<EditorStore>, block: string | Block<any>) => WritableDraft<Block<any>>
+  container: (immerState: WritableDraft<EditorStore>, blockId: string) => WritableDraft<Block<any>[]>
 }
 
 export interface Block<T> {
@@ -48,6 +54,24 @@ export interface Block<T> {
   blockType: BlockType<T>
   attributes: T
   setAttributes: (attributes: T) => void
+  parentId?: string
+  children: Block<T>[]
+  actions: {
+    moveUp: () => void
+    moveDown: () => void
+  }
+}
+
+function findItemNested(blocks: Block<any>[], itemId: string): Block<any> | undefined {
+  const res = blocks.reduce<Block<any> | undefined>((prev: Block<any> | undefined, curr: Block<any>) => {
+    if (prev) return prev
+    if (curr.id === itemId) return curr
+    if (curr.children) return findItemNested(curr.children, itemId)
+
+    return prev
+  }, undefined)
+
+  return res
 }
 
 const editorStore = create<EditorStore>(
@@ -60,7 +84,7 @@ const editorStore = create<EditorStore>(
         })
       },
       blocks: [],
-      addBlock: (blockTypeKey, insertAfter) =>
+      addBlock: (blockTypeKey, options) =>
         set((state) => {
           const id = v4()
           const blockType = state.blockTypes.get(blockTypeKey)
@@ -68,22 +92,61 @@ const editorStore = create<EditorStore>(
             throw new Error('Block type does not exist inside the blockTypes store.')
           }
 
-          const block = {
+          const block: Block<any> = {
             id,
             blockType,
             attributes: blockType.attributes,
-            setAttributes(attributes: any) {
-              set((_state) => {
-                const targetBlock = _state.blocks.find((it) => it.id === id)
+            setAttributes(attributes) {
+              set((draft) => {
+                const targetBlock = draft.select(draft, id)
+
                 if (targetBlock) {
                   targetBlock.attributes = attributes
                 }
               })
-            }
+            },
+            actions: {
+              moveUp() {
+                set((draft) => {
+                  const children = draft.container(draft, id)
+                  const index = children.findIndex((it) => it.id === id)
+                  if (index - 1 === -1) {
+                    return
+                  }
+
+                  const from = children.splice(index, 1)[0]
+                  children.splice(index - 1, 0, from)
+                })
+              },
+              moveDown() {
+                set((draft) => {
+                  const children = draft.container(draft, id)
+                  const index = children.findIndex((it) => it.id === id)
+                  if (index === children.length - 1) {
+                    return
+                  }
+
+                  const from = children.splice(index, 1)[0]
+                  children.splice(index + 1, 0, from)
+                })
+              }
+            },
+            children: [],
+            parentId: options?.toChildren ? options?.blockId : undefined
           }
 
-          if (insertAfter) {
-            const index = state.blocks.findIndex((it) => it.id === insertAfter)
+          if (options && options.blockId) {
+            const container = options?.toChildren ? state.select(state, options.blockId).children : state.container(state, options.blockId)
+
+            if (options.insertAfterBlock) {
+              const index = container.findIndex((it) => it.id === options.insertAfterBlock)
+              if (index === undefined) throw new Error('whoops')
+              container.splice(index + 1, 0, block)
+            } else {
+              container.push(block)
+            }
+          } else if (options && options.insertAfterBlock) {
+            const index = state.blocks.findIndex((it) => it.id === options.insertAfterBlock)
             state.blocks.splice(index + 1, 0, block)
           } else {
             state.blocks.push(block)
@@ -101,32 +164,47 @@ const editorStore = create<EditorStore>(
         const { blocks } = get()
 
         const rendered = blocks.map((block) => {
-          return ReactDOMServer.renderToStaticMarkup(createElement(block.blockType.save, block))
+          return ReactDOMServer.renderToString(createElement(block.blockType.save, block))
         })
 
         alert(JSON.stringify(rendered))
       },
-      blockActions: {
-        moveUp: (key: string) =>
-          set((state) => {
-            const index = state.blocks.findIndex((it) => it.id === key)
-            if (index - 1 === -1) {
-              return
-            }
 
-            const from = state.blocks.splice(index, 1)[0]
-            state.blocks.splice(index - 1, 0, from)
-          }),
-        moveDown: (key: string) =>
-          set((state) => {
-            const index = state.blocks.findIndex((it) => it.id === key)
-            if (index === state.blocks.length - 1) {
-              return
-            }
+      select: (immerState, block) => {
+        const { blocks } = immerState
+        const find = () => {
+          if (typeof block === 'string') {
+            return findItemNested(blocks, block)
+          }
 
-            const from = state.blocks.splice(index, 1)[0]
-            state.blocks.splice(index + 1, 0, from)
-          })
+          if (block?.parentId) {
+            return findItemNested(blocks, block?.parentId)
+          }
+
+          return findItemNested(blocks, block.id)
+        }
+
+        const result = find()
+        if (!result) throw new Error('No block found in select')
+        return result
+      },
+      container: (immerState, blockId) => {
+        const { select, blocks } = immerState
+
+        const block = select(immerState, blockId)
+
+        if (!block) {
+          throw new Error('Couldnt find block')
+        }
+
+        if (block.parentId) {
+          const item = select(immerState, block.parentId)
+          if (!item) throw new Error('Couldnt find container of block')
+
+          return item.children
+        }
+
+        return blocks
       }
     }))
   )

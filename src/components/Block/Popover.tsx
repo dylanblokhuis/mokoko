@@ -11,16 +11,30 @@ interface ToolbarPopoverProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const ToolbarPopover = forwardRef<HTMLDivElement, ToolbarPopoverProps>(({ id, style, blockId }, ref) => {
-  const { moveUp, moveDown } = useEditorStore((state) => state.blockActions)
+  const { moveDown, moveUp } = useEditorStore((state) => state.select(state, blockId).actions)
+
   return (
     <div ref={ref} id={id} className="bg-white px-3 py-2 border rounded absolute z-50" style={style}>
       <div className="flex flex-col items-center justify-center">
-        <Button onPress={() => moveUp(blockId)} className="mb-1">
+        <button
+          type="button"
+          onClick={(event) => {
+            event.stopPropagation()
+            moveUp()
+          }}
+          className="mb-1"
+        >
           <ChevronUp size="16.5px" />
-        </Button>
-        <Button onPress={() => moveDown(blockId)}>
+        </button>
+        <button
+          type="button"
+          onClick={(event) => {
+            event.stopPropagation()
+            moveDown()
+          }}
+        >
           <ChevronDown size="16.5px" />
-        </Button>
+        </button>
       </div>
     </div>
   )

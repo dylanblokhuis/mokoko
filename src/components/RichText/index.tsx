@@ -15,6 +15,7 @@ const RichText = function ({ placeholder = 'Type here...', as, html, onChange, b
   const ref = useRef<HTMLParagraphElement>(null)
   const addBlock = useEditorStore((state) => state.addBlock)
   const isFocused = useEditorStore((state) => state.focusedBlockKey) === blockId
+  const parentBlockId = useEditorStore((state) => state.select(state, blockId).parentId)
   const isPlaceholder = html === '' && !isFocused
 
   const className = classNames({
@@ -30,7 +31,11 @@ const RichText = function ({ placeholder = 'Type here...', as, html, onChange, b
     if (event.key === 'Enter' && event.shiftKey === false) {
       event.preventDefault()
 
-      addBlock('core/paragraph', blockId)
+      addBlock('core/paragraph', {
+        blockId: parentBlockId || blockId,
+        insertAfterBlock: blockId,
+        toChildren: !!parentBlockId
+      })
     }
   }
 
