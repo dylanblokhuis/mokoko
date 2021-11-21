@@ -18,7 +18,8 @@
     "no-use-before-define": "off",
     "no-param-reassign": "off",
     "react/jsx-props-no-spreading": "off",
-    "func-names": "off"
+    "func-names": "off",
+    "@typescript-eslint/no-explicit-any": "off"
   },
   "env": {
     "browser": true

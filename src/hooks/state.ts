@@ -163,15 +163,25 @@ const editorStore = create<EditorStore>(
         const ReactDOMServer = await import('react-dom/server')
         const { blocks } = get()
 
-        const rendered = blocks.map((block) => {
-          return ReactDOMServer.renderToString(createElement(block.blockType.save, block))
+        /**
+         * Recursively create all the react elements
+         */
+        function createReactElements(fnBlocks: Block<any>[]): React.ReactElement<Block<any>>[] {
+          return fnBlocks.map((block) => {
+            const children = createReactElements(block.children)
+            return createElement(block.blockType.save, block, children)
+          })
+        }
+
+        const rendered = createReactElements(blocks).map((block) => {
+          return ReactDOMServer.renderToString(block)
         })
 
         alert(JSON.stringify(rendered))
       },
 
-      select: (immerState, block) => {
-        const { blocks } = immerState
+      select: (state, block) => {
+        const { blocks } = state
         const find = () => {
           if (typeof block === 'string') {
             return findItemNested(blocks, block)
@@ -188,17 +198,17 @@ const editorStore = create<EditorStore>(
         if (!result) throw new Error('No block found in select')
         return result
       },
-      container: (immerState, blockId) => {
-        const { select, blocks } = immerState
+      container: (state, blockId) => {
+        const { select, blocks } = state
 
-        const block = select(immerState, blockId)
+        const block = select(state, blockId)
 
         if (!block) {
           throw new Error('Couldnt find block')
         }
 
         if (block.parentId) {
-          const item = select(immerState, block.parentId)
+          const item = select(state, block.parentId)
           if (!item) throw new Error('Couldnt find container of block')
 
           return item.children
