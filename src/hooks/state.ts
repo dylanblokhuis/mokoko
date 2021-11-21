@@ -169,7 +169,14 @@ const editorStore = create<EditorStore>(
         function createReactElements(fnBlocks: Block<any>[]): React.ReactElement<Block<any>>[] {
           return fnBlocks.map((block) => {
             const children = createReactElements(block.children)
-            return createElement(block.blockType.save, block, children)
+            return createElement(
+              block.blockType.save,
+              {
+                ...block,
+                key: block.id
+              },
+              children
+            )
           })
         }
 
