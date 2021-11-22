@@ -21,7 +21,7 @@ const Layout = function () {
     <OverlayProvider>
       <div className="Layout">
         <div className="Toolbar bg-gray-100 py-2 min-h-[50px] flex items-center justify-start px-6">
-          <BlockLibrary />
+          <BlockLibrary className="bg-blue-500 text-white px-3 py-1 rounded shadow">Add block</BlockLibrary>
 
           <Button onPress={save} className="bg-blue-500 text-white px-3 py-1 rounded shadow ml-5">
             Save

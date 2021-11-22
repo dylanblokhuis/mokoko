@@ -9,9 +9,10 @@ import Button from '../Button'
 interface BlockLibraryPopoverProps extends React.HTMLAttributes<HTMLDivElement> {
   isOpen: boolean
   onClose: () => void
+  blockId?: string
 }
 
-const BlockLibraryPopover = forwardRef<HTMLDivElement, BlockLibraryPopoverProps>(({ isOpen, onClose, ...otherProps }, ref) => {
+const BlockLibraryPopover = forwardRef<HTMLDivElement, BlockLibraryPopoverProps>(({ isOpen, onClose, blockId, ...otherProps }, ref) => {
   const blockTypes = useEditorStore((state) => [...state.blockTypes])
   const addBlock = useEditorStore((state) => state.addBlock)
 
@@ -33,19 +34,22 @@ const BlockLibraryPopover = forwardRef<HTMLDivElement, BlockLibraryPopoverProps>
   const { dialogProps, titleProps } = useDialog({}, ref as React.RefObject<HTMLDivElement>)
 
   function handleClick(key: string) {
-    addBlock(key)
+    addBlock(key, {
+      blockId,
+      toChildren: !!blockId
+    })
     onClose()
   }
 
   return (
     <FocusScope restoreFocus>
       <div
-        className="bg-white flex flex-col px-5 py-3 shadow border border-gray-300 rounded"
+        className="bg-white flex flex-col px-5 py-3 shadow border border-gray-300 rounded overflow-auto"
         ref={ref}
         {...mergeProps(overlayProps, dialogProps, otherProps, modalProps)}
       >
         <h2 {...titleProps} className="text-xl font-bold">
-          Click on a block
+          Block Library
         </h2>
 
         <hr className="mt-3 mb-4" />
@@ -63,5 +67,9 @@ const BlockLibraryPopover = forwardRef<HTMLDivElement, BlockLibraryPopoverProps>
     </FocusScope>
   )
 })
+
+BlockLibraryPopover.defaultProps = {
+  blockId: undefined
+}
 
 export default BlockLibraryPopover

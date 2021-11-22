@@ -2,11 +2,16 @@ import { useRef } from 'react'
 import { useOverlayTriggerState } from '@react-stately/overlays'
 import { OverlayContainer, useOverlayPosition, useOverlayTrigger } from '@react-aria/overlays'
 
-import styles from './index.module.css'
 import BlockLibraryPopover from './Popover'
 import Button from '../Button'
 
-const BlockLibrary = function () {
+interface BlockLibraryProps {
+  blockId?: string
+  children: React.ReactNode
+  className?: string
+}
+
+const BlockLibrary = function ({ blockId, children, className }: BlockLibraryProps) {
   const state = useOverlayTriggerState({})
   const triggerRef = useRef(null)
   const overlayRef = useRef(null)
@@ -30,18 +35,30 @@ const BlockLibrary = function () {
   // popover closes.
 
   return (
-    <div className={styles.BlockLibrary}>
-      <Button onPress={() => state.open()} className="bg-blue-500 text-white px-3 py-1 rounded shadow" ref={triggerRef} {...triggerProps}>
-        Add block
+    <>
+      <Button className={className} onPress={() => state.open()} ref={triggerRef} {...triggerProps}>
+        {children}
       </Button>
 
       {state.isOpen && (
         <OverlayContainer>
-          <BlockLibraryPopover {...overlayProps} {...positionProps} ref={overlayRef} isOpen={state.isOpen} onClose={state.close} />
+          <BlockLibraryPopover
+            {...overlayProps}
+            {...positionProps}
+            ref={overlayRef}
+            isOpen={state.isOpen}
+            onClose={state.close}
+            blockId={blockId}
+          />
         </OverlayContainer>
       )}
-    </div>
+    </>
   )
+}
+
+BlockLibrary.defaultProps = {
+  blockId: undefined,
+  className: undefined
 }
 
 export default BlockLibrary
