@@ -1,10 +1,9 @@
 import './css/globals.css'
 import { OverlayProvider } from '@react-aria/overlays'
 
-import BlockLibrary from './components/BlockLibrary'
 import Editor from './components/Editor'
-import useEditorStore from './hooks/state'
-import Button from './components/Button'
+import Sidebar from './components/Sidebar'
+import Toolbar from './components/Toolbar'
 
 /**
  * TODO: lazy load blocks
@@ -15,19 +14,11 @@ import './blocks/button'
 import './blocks/column'
 
 const Layout = function () {
-  const save = useEditorStore((state) => state.save)
-
   return (
     <OverlayProvider>
-      <div className="Layout">
-        <div className="Toolbar bg-gray-100 py-2 min-h-[50px] flex items-center justify-start px-6">
-          <BlockLibrary className="bg-blue-500 text-white px-3 py-1 rounded shadow">Add block</BlockLibrary>
-
-          <Button onPress={save} className="bg-blue-500 text-white px-3 py-1 rounded shadow ml-5">
-            Save
-          </Button>
-        </div>
-
+      <div className="Layout pt-12">
+        <Toolbar />
+        <Sidebar />
         <Editor />
       </div>
     </OverlayProvider>
